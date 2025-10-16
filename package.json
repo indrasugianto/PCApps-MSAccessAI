@@ -1,0 +1,30 @@
+{
+  "name": "access-metadata-explorer",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Extract and analyze MS Access database metadata",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "cd apps/web && npm run dev",
+    "build:web": "cd apps/web && npm run build",
+    "dev:worker": "cd apps/worker && dotnet run",
+    "build:worker": "cd apps/worker && dotnet build",
+    "verify": "node verify-supabase-setup.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.75.0"
+  },
+  "keywords": [
+    "access",
+    "database",
+    "metadata",
+    "migration"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+
