@@ -15,42 +15,57 @@ A full-stack application to upload MS Access databases (.mdb/.accdb), extract SQ
 - **Worker**: Windows OS, .NET 8 SDK, Microsoft Access/Access Runtime
 
 ### Setup
-```bash
-# 1. Frontend
-cd apps/web
-npm install
-npm run dev  # http://localhost:5173
 
-# 2. Worker (Windows)
-cd apps/worker
-dotnet run
-```
+1. **Configure Supabase** (see [Setup Guide](doc/SETUP_GUIDE.md))
+   - Run SQL schemas in `supabase/sql/` (001, 002, 003)
+   - Enable email authentication
+   - Get service role key
 
-### Configuration
-Create environment files:
-- `apps/web/.env` - Frontend configuration
-- `.env` - Worker configuration
+2. **Configure Environment Files**
+   
+   `apps/web/.env`:
+   ```env
+   VITE_SUPABASE_URL=https://qexnxhojzciwdzlwttcd.supabase.co
+   VITE_SUPABASE_ANON_KEY=your_anon_key_here
+   ```
+   
+   `.env` (root, for worker):
+   ```env
+   DATABASE_URL=postgresql://postgres:KXBM?BaAopz?9BHt@db.qexnxhojzciwdzlwttcd.supabase.co:5432/postgres
+   SUPABASE_URL=https://qexnxhojzciwdzlwttcd.supabase.co
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+   STORAGE_BUCKET=access-files
+   WORKER_POLL_MS=4000
+   ```
 
-See [Setup Guide](doc/SETUP_GUIDE.md) for detailed instructions.
+3. **Run Applications**
+   ```bash
+   # Frontend
+   cd apps/web
+   npm install
+   npm run dev  # http://localhost:5173
+   
+   # Worker (Windows)
+   cd apps/worker
+   dotnet run
+   ```
 
 ## Features
 
-✅ User authentication  
-✅ Multi-project management  
-✅ Upload .accdb/.mdb files  
-✅ Automatic metadata extraction  
-✅ View SQL queries  
-✅ View VBA modules  
-✅ Filter by file  
-✅ Real-time updates  
+- User authentication
+- Multi-project management
+- Upload .accdb/.mdb files
+- Automatic metadata extraction
+- View SQL queries and VBA modules
+- Filter by file
+- Real-time updates
 
 ## Documentation
 
-📚 **[Setup Guide](doc/SETUP_GUIDE.md)** - Step-by-step setup instructions  
-📋 **[Implementation Details](doc/IMPLEMENTATION.md)** - Architecture and technical decisions  
-🔍 **[Technical Review](doc/TECHNICAL_REVIEW.md)** - Technical validation and analysis  
-📖 **[Original Specification](doc/Readme.md)** - Original project requirements  
-📝 **[Review Summary](doc/REVIEW_SUMMARY.md)** - Implementation validation  
+- **[Setup Guide](doc/SETUP_GUIDE.md)** - Detailed setup instructions
+- **[Implementation](doc/IMPLEMENTATION.md)** - Architecture and technical details
+- **[Technical Review](doc/TECHNICAL_REVIEW.md)** - Technical validation
+- **[Original Spec](doc/Readme.md)** - Original project requirements
 
 ## Project Structure
 
@@ -62,11 +77,6 @@ See [Setup Guide](doc/SETUP_GUIDE.md) for detailed instructions.
   /doc                # Documentation
   /supabase/sql       # Database schemas
 ```
-
-## Support
-
-- Frontend README: [apps/web/README.md](apps/web/README.md)
-- Worker README: [apps/worker/README.md](apps/worker/README.md)
 
 ## License
 

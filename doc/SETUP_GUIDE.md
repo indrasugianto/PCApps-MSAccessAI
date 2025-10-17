@@ -1,65 +1,60 @@
-# Setup Guide - Access Metadata Explorer
+# Setup Guide
 
-Step-by-step guide to set up and run the Access Metadata Explorer.
+Complete guide to set up and run the Access Metadata Explorer.
 
-## Step 1: Apply Database Schemas to Supabase
+## Prerequisites
 
-1. Go to https://supabase.com/dashboard/project/qexnxhojzciwdzlwttcd/sql/new
+- **Frontend**: Node.js 18+
+- **Backend**: Supabase account (free tier works)
+- **Worker**: Windows OS, .NET 8 SDK, Microsoft Access or Access Runtime
 
-2. Run each SQL file in order:
+## Step 1: Supabase Configuration
 
-   **File 1: `supabase/sql/001_schema.sql`**
-   - Creates tables: `projects`, `import_jobs`, `queries`, `vba_modules`
-   - Sets up UUIDs, indexes, and constraints
-   
-   **File 2: `supabase/sql/002_policies.sql`**
-   - Enables Row Level Security (RLS)
-   - Creates policies for user data isolation
-   
-   **File 3: `supabase/sql/003_storage_policies.sql`**
-   - Creates storage bucket `access-files`
-   - Sets up upload/download policies
+### 1.1 Apply Database Schemas
 
-3. Verify tables exist:
-   - Go to Table Editor
-   - You should see: `projects`, `import_jobs`, `queries`, `vba_modules`
+Go to [SQL Editor](https://supabase.com/dashboard/project/qexnxhojzciwdzlwttcd/sql/new) and run in order:
 
-## Step 2: Enable Authentication
+1. `supabase/sql/001_schema.sql` - Creates tables
+2. `supabase/sql/002_policies.sql` - Enables RLS
+3. `supabase/sql/003_storage_policies.sql` - Creates storage bucket
+
+### 1.2 Enable Authentication
 
 1. Go to Authentication → Providers
 2. Enable **Email** provider
-3. (Optional) Enable Google or GitHub OAuth
+3. (Optional) Disable email confirmation for easier testing
 
-## Step 3: Get Service Role Key
+### 1.3 Get API Keys
 
-1. Go to Settings → API
-2. Copy your **service_role** key (needed for worker)
-3. **Keep this secret!** Never commit to version control
+Go to Settings → API and copy:
+- **Project URL**: `https://qexnxhojzciwdzlwttcd.supabase.co`
+- **Anon key**: For frontend (public key)
+- **Service role key**: For worker (keep secret!)
 
-## Step 4: Configure Environment Variables
+## Step 2: Environment Configuration
 
-### Frontend (.env file)
+### Frontend Environment
 
 Create `apps/web/.env`:
 
 ```env
 VITE_SUPABASE_URL=https://qexnxhojzciwdzlwttcd.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFleG54aG9qemNpd2R6bHd0dGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2MDY1NTEsImV4cCI6MjA3NjE4MjU1MX0.Gx3GZzC0bIc8WIBYQvt_da6wC2T0gDGzVVemhhNqDXw
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
 ```
 
-### Worker (.env file)
+### Worker Environment
 
-Create `.env` in root directory:
+Create `.env` in project root:
 
 ```env
 DATABASE_URL=postgresql://postgres:KXBM?BaAopz?9BHt@db.qexnxhojzciwdzlwttcd.supabase.co:5432/postgres
 SUPABASE_URL=https://qexnxhojzciwdzlwttcd.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY_FROM_STEP_3
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 STORAGE_BUCKET=access-files
 WORKER_POLL_MS=4000
 ```
 
-## Step 5: Run the Frontend
+## Step 3: Run Frontend
 
 ```bash
 cd apps/web
@@ -69,23 +64,16 @@ npm run dev
 
 Open http://localhost:5173
 
-You should see the login page!
+## Step 4: Run Worker (Windows)
 
-## Step 6: Run the Worker (Windows Only)
+### Enable VBA Trust
 
-### Prerequisites:
-- Windows OS
-- Microsoft Access or Access Runtime installed
-- Trust VBA access enabled
-
-### Enable VBA Trust:
 1. Open Microsoft Access
-2. Go to File → Options
-3. Trust Center → Trust Center Settings
-4. Macro Settings
-5. ✓ **Trust access to the VBA project object model**
+2. File → Options → Trust Center → Trust Center Settings
+3. Macro Settings → ✓ **Trust access to the VBA project object model**
+4. Click OK
 
-### Run Worker:
+### Run Worker
 
 ```bash
 cd apps/worker
@@ -100,34 +88,13 @@ Supabase URL: https://qexnxhojzciwdzlwttcd.supabase.co
 Poll Interval: 4000ms
 ```
 
-## Step 7: Test End-to-End
+## Step 5: Test End-to-End
 
-1. **Sign Up**
-   - Go to http://localhost:5173
-   - Click "Don't have an account? Sign Up"
-   - Enter email and password
-   - Check your email for confirmation link
-
-2. **Create Project**
-   - Click "+ New Project"
-   - Enter name: "Test Project"
-   - Click "Create Project"
-
-3. **Upload Access File**
-   - Click on your project
-   - Click "Choose File"
-   - Select an .accdb or .mdb file
-   - Click "Upload File"
-
-4. **Watch Worker Process**
-   - Worker console should show: "Found 1 pending job(s)"
-   - Watch extraction progress
-   - See: "✓ Completed job ..."
-
-5. **View Results**
-   - Frontend should update automatically
-   - Click "Queries" tab to see extracted SQL
-   - Click "VBA Modules" tab to see extracted code
+1. **Sign Up** at http://localhost:5173
+2. **Create a Project** (+ New Project button)
+3. **Upload an Access file** (.accdb or .mdb)
+4. **Watch worker console** - should process within 4 seconds
+5. **View results** in Queries and VBA Modules tabs
 
 ## Troubleshooting
 
@@ -135,53 +102,71 @@ Poll Interval: 4000ms
 
 **"Missing Supabase environment variables"**
 - Ensure `apps/web/.env` exists with correct values
-- Restart dev server: Ctrl+C, then `npm run dev`
+- Restart dev server after creating .env
 
-**"Authentication failed"**
-- Check that Email provider is enabled in Supabase
-- Clear browser cookies/cache
-- Try incognito mode
+**"Failed to upload file"**
+- Check storage bucket `access-files` exists
+- Verify storage policies are applied (003_storage_policies.sql)
 
 ### Worker Issues
 
-**"ERROR: Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"**
-- Ensure root `.env` file exists
-- Check environment variables are set correctly
-
 **"Could not find DAO.DBEngine.120"**
-- Install Microsoft Access Database Engine
-- Or install Access Runtime (free)
+- Install [Microsoft Access Runtime](https://www.microsoft.com/en-us/download/details.aspx?id=54920) (free)
 
 **"VBE object is null"**
 - Enable "Trust access to VBA project object model" in Access
 - Restart worker after enabling
 
-**"Connection timeout"**
-- Check internet connection
-- Verify DATABASE_URL is correct
-- Check firewall isn't blocking connections
+**"Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY"**
+- Ensure `.env` file exists in project root
+- Verify service role key is correct
 
-### Storage Issues
+### Database Issues
 
-**"Failed to upload file"**
-- Verify storage bucket `access-files` exists
-- Check storage policies are applied (003_storage_policies.sql)
-- Ensure user is authenticated
+**"Table does not exist"**
+- Run all SQL files in order (001, 002, 003)
+
+**"Permission denied"**
+- Verify RLS policies are applied (002_policies.sql)
+- Check user is authenticated
+
+## Verification
+
+Run through this checklist:
+
+- [ ] Database tables created (projects, import_jobs, queries, vba_modules)
+- [ ] Storage bucket `access-files` created
+- [ ] RLS policies enabled
+- [ ] Email authentication enabled
+- [ ] Frontend .env file created
+- [ ] Worker .env file created
+- [ ] Frontend runs at http://localhost:5173
+- [ ] Worker runs without errors
+- [ ] Can sign up and create project
+- [ ] Can upload Access file
+- [ ] Worker processes file
+- [ ] Results appear in frontend
+
+## Deployment
+
+### Frontend
+
+```bash
+cd apps/web
+npm run build
+# Deploy dist/ folder to Vercel, Netlify, or Azure Static Web Apps
+```
+
+### Worker
+
+```bash
+cd apps/worker
+dotnet publish -c Release -r win-x64 --self-contained
+# Copy to Windows VM and install as Windows Service using NSSM
+```
 
 ## Next Steps
 
-- Deploy frontend to Vercel/Netlify
-- Run worker as Windows Service on production VM
-- Set up monitoring and logging
-- Add file size limits and validation
-- Implement duplicate detection
-
-## Support
-
-If you encounter issues:
-1. Check browser console (F12) for errors
-2. Check worker console output
-3. Verify all SQL scripts ran successfully
-4. Check Supabase logs in dashboard
-5. Review `TECHNICAL_REVIEW.md` for architecture details
-
+- Review [Implementation Guide](IMPLEMENTATION.md) for architecture details
+- Check [Technical Review](TECHNICAL_REVIEW.md) for security considerations
+- See [Original Spec](Readme.md) for complete feature list

@@ -1,14 +1,14 @@
-# Access Metadata Explorer - Frontend
+# Frontend - Access Metadata Explorer
 
-React + Vite + TypeScript frontend for the Access Metadata Explorer.
+React + Vite + TypeScript frontend application.
 
 ## Setup
 
-1. Create a `.env` file with your Supabase credentials:
+1. Create `.env` file:
 
 ```env
 VITE_SUPABASE_URL=https://qexnxhojzciwdzlwttcd.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFleG54aG9qemNpd2R6bHd0dGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2MDY1NTEsImV4cCI6MjA3NjE4MjU1MX0.Gx3GZzC0bIc8WIBYQvt_da6wC2T0gDGzVVemhhNqDXw
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
 ```
 
 2. Install dependencies:
@@ -17,28 +17,36 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 npm install
 ```
 
-3. Run the development server:
+3. Run development server:
 
 ```bash
 npm run dev
 ```
 
-The app will be available at http://localhost:5173
+Open http://localhost:5173
 
 ## Features
 
 - User authentication (sign up/sign in)
-- Project management (create, view projects)
+- Project management
 - Upload Access database files (.accdb, .mdb)
 - View extracted SQL queries
 - View extracted VBA modules
 - Filter by specific files
 - Real-time status updates
 
-## Build for Production
+## Build
 
 ```bash
 npm run build
 ```
 
-The built files will be in the `dist/` directory, ready to deploy to Vercel, Netlify, or any static hosting service.
+The built files will be in the `dist/` directory, ready to deploy to Vercel, Netlify, or Azure Static Web Apps.
+
+## Tech Stack
+
+- React 18
+- TypeScript
+- Vite
+- Supabase JS SDK
+- Tailwind CSS (if configured)
